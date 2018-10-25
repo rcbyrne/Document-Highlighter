@@ -8,6 +8,8 @@ import React, { Component } from 'react';
 //import PropTypes from 'prop-types';
 import './Highlighter.css';
 
+import {createBlock} from '../utils/model';
+
 import ColorMixer from '../../../node_modules/colormix/src/index';
 
 const colors = [
@@ -63,19 +65,50 @@ class Highlighter extends Component {
 
   highlightContainer;
 
+  constructor(props){
+    super(props);
+
+    this.checkSelectionFn = this.checkSelection.bind(this);
+  }
+
+  componentDidMount(){
+    window.addEventListener('mouseup', this.checkSelectionFn);
+  }
+
+  componentWillUnmount(){
+    window.removeEventListener('mouseup', this.checkSelectionFn);
+  }
+
   render() {
+    const props = this.props;
+    const hoverId = props.hoverId;
+
     return (
-      <div
-        className="highlight-container"
-        ref={node => this.highlightContainer = node}
-        onMouseUp={() => this.checkSelection()}
-      >{ this.props.textModel.map(block => 
-          <span 
-            data-offset={block.range.start} 
-            style={this.createBackground(block.highlights)}
-          >{block.text}</span>
-      )}</div>
+      <div className="highlight-container">
+        <div className="page">
+          <h1>Document Highlighter</h1>
+          <p className="hint">Please highlight the text below by clicking and dragging</p>
+          <div ref={node => this.highlightContainer = node}>{ this.props.textModel.map(block => this.textBlock(block, hoverId))}</div>
+        </div>
+      </div>
     );
+  }
+
+  textBlock(block, hoverId){
+    let style;
+
+    if(hoverId){
+      style = this.createBackground(block.highlights.filter(a => a.id === hoverId));
+    } else {
+      style = this.createBackground(block.highlights);
+    };
+
+    return (
+      <span 
+        data-offset={block.range.start} 
+        style={style}
+      >{block.text}</span>
+    )
   }
 
   createBackground(backgrounds){
@@ -99,14 +132,6 @@ class Highlighter extends Component {
     }
   }
 
-  createSection(text, start, end, highlights){
-    return {
-      text,
-      range: { start, end },
-      highlights
-    }
-  }
-
   splitBlockSingle(block, splitLocation, highlight, highlightDirection){
 
     const text = block.text;
@@ -117,13 +142,13 @@ class Highlighter extends Component {
     const newHighlights = [...block.highlights, highlight];
 
     return [
-      this.createSection(
+      createBlock(
         text.slice(0, relativeLocation),
         blockStart,
         splitLocation,
         highlightDirection === "back" ? newHighlights : blockHighlights
       ),
-      this.createSection(
+      createBlock(
         text.slice(relativeLocation),
         splitLocation,
         blockEnd,
@@ -142,19 +167,19 @@ class Highlighter extends Component {
     const blockHighlights = block.highlights;
 
     return [
-      this.createSection(
+      createBlock(
         text.slice(0, relativeStart),
         blockStart,
         splitStart,
         blockHighlights
       ),
-      this.createSection(
+      createBlock(
         text.slice(relativeStart, relativeEnd),
         splitStart,
         splitEnd,
         [...blockHighlights, highlight]
       ),
-      this.createSection(
+      createBlock(
         text.slice(relativeEnd),
         splitEnd,
         blockEnd,
@@ -213,7 +238,7 @@ class Highlighter extends Component {
         // Section falls completely inside new selection. 
         // Add the highlight colour to the section
         textModel.push(
-          this.createSection(block.text,
+          createBlock(block.text,
             blockStart,
             blockEnd, 
             [...block.highlights, newHighlight] )
@@ -237,6 +262,7 @@ class Highlighter extends Component {
   }
   
   checkSelection(){
+
     const container = this.highlightContainer;
     const selection = window.getSelection();
     

@@ -4,3 +4,21 @@
     flex: 1;
     padding: 40px;
 }
+
+.highlight-container .page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.highlight-container h1 {
+    margin: 0;
+    margin-bottom: 12px;
+}
+
+.highlight-container .hint {
+    margin: 0;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    color: #aaa;
+    border-bottom: 2px solid #eee;
+}

@@ -10,16 +10,9 @@ import './HighlightManager.css';
 
 class HighlightManager extends PureComponent {
 
-  constructor(props){
-
-    super(props);
-
-    this.state = {
-    }
-  }
-
   render() {
-    const highlights = this.props.highlights;
+    const props = this.props;
+    const highlights = props.highlights;
     const length = highlights.length;
 
     if(length === 0) return <div className="highlight-manager hidden"></div>;
@@ -27,15 +20,18 @@ class HighlightManager extends PureComponent {
     return (
       <div className="highlight-manager">
         <h2>Current Selections ({length}):</h2>
-        { highlights.map(highlight => this.sectionComponent(highlight)) }
+        { highlights.map(highlight => this.sectionComponent(props, highlight)) }
       </div>
     );
   }
 
-  sectionComponent(highlight){
+  sectionComponent(props, highlight){
     return (
       <div 
+        onMouseEnter={() => props.hoverSelection(highlight.id)}
+        onMouseLeave={() => props.clearHoverSelection(highlight.id)}
         className="highlight-section"
+        onClick={() => props.removeSelection(highlight.id)}
         style={{
           borderLeftColor: highlight.color
         }}
