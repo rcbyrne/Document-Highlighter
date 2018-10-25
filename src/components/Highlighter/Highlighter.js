@@ -163,16 +163,18 @@ class Highlighter extends Component {
     ];
   }
 
-  addSelection(selectionStart, selectionEnd, string){
+  newHighlight(text){
+    const id = Date.now();
+    const color = colors[this.props.highlights.length];
+    
+    return { id, color, text };
+  }
+
+  addSelection(selectionStart, selectionEnd, text){
 
     const props = this.props;
     const highlights = props.highlights;
-
-    const newHighlight = {
-      id: Date.now(),
-      color: colors[highlights.length],
-      string
-    };
+    const newHighlight = this.newHighlight(text);
 
     if(selectionStart === selectionEnd) return;
 

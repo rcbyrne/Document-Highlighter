@@ -1,4 +1,6 @@
 /* Highlighter Component Styles */
 
-.highlight-container span {
+.highlight-container {
+    flex: 1;
+    padding: 40px;
 }
