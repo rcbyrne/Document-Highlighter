@@ -4,11 +4,12 @@
 *
 */
 
-import React, { PureComponent } from 'react';
-//import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import './HighlightManager.css';
 
-class HighlightManager extends PureComponent {
+import HighlightSection from '../HighlightSection/HighlightSection';
+
+class HighlightManager extends Component {
 
   render() {
     const props = this.props;
@@ -19,32 +20,19 @@ class HighlightManager extends PureComponent {
 
     return (
       <div className="highlight-manager">
-        <h2>Current Selections ({length}):</h2>
-        { highlights.map(highlight => this.sectionComponent(props, highlight)) }
-      </div>
-    );
-  }
-
-  sectionComponent(props, highlight){
-    return (
-      <div 
-        onMouseEnter={() => props.hoverSelection(highlight.id)}
-        onMouseLeave={() => props.clearHoverSelection(highlight.id)}
-        className="highlight-section"
-        onClick={() => props.removeSelection(highlight.id)}
-        style={{
-          borderLeftColor: highlight.color
-        }}
-      >
-        "{ highlight.text }"
-        <div className="stats">{highlight.text.length} charecters</div>
+        <h2>Selections ({length}):</h2>
+        { highlights.map(({id, text, color}) =>
+          <HighlightSection
+            key={id}
+            id={id}
+            text={text}
+            color={color}
+            {...props}
+          />
+        )}
       </div>
     );
   }
 }
-
-HighlightManager.propTypes = {
-
-};
 
 export default HighlightManager;

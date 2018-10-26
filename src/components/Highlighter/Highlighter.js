@@ -5,61 +5,13 @@
 */
 
 import React, { Component } from 'react';
-//import PropTypes from 'prop-types';
 import './Highlighter.css';
 
-import {createBlock} from '../utils/model';
+import { createBlock, getNextColour } from '../utils/utils';
 
-import ColorMixer from '../../../node_modules/colormix/src/index';
+import TextBlock from '../TextBlock/TextBlock';
+import EditText from '../EditText/EditText';
 
-const colors = [
-  '#66CDAA',
-  '#0000CD',
-  '#BA55D3',
-  '#9370DB',
-  '#3CB371',
-  '#7B68EE',
-  '#00FA9A',
-  '#48D1CC',
-  '#C71585',
-  '#191970',
-  '#F5FFFA',
-  '#FFE4E1',
-  '#FFE4B5',
-  '#FFDEAD',
-  '#000080',
-  '#FDF5E6',
-  '#808000',
-  '#6B8E23',
-  '#FFA500',
-  '#FF4500',
-  '#DA70D6',
-  '#EEE8AA',
-  '#98FB98',
-  '#AFEEEE',
-  '#DB7093',
-  '#FFEFD5',
-  '#FFDAB9',
-  '#CD853F',
-  '#FFC0CB',
-  '#DDA0DD',
-  '#B0E0E6',
-  '#800080',
-  '#663399',
-  '#FF0000',
-  '#BC8F8F',
-  '#4169E1',
-  '#8B4513',
-  '#FA8072',
-  '#F4A460',
-  '#2E8B57',
-  '#FFF5EE',
-  '#A0522D',
-  '#C0C0C0',
-  '#87CEEB',
-  '#6A5ACD',
-  '#708090',
-];
 
 class Highlighter extends Component {
 
@@ -69,6 +21,10 @@ class Highlighter extends Component {
     super(props);
 
     this.checkSelectionFn = this.checkSelection.bind(this);
+
+    this.state = {
+      editMode: false
+    }
   }
 
   componentDidMount(){
@@ -81,55 +37,53 @@ class Highlighter extends Component {
 
   render() {
     const props = this.props;
-    const hoverId = props.hoverId;
+    const editMode = this.state.editMode;
 
     return (
       <div className="highlight-container">
         <div className="page">
-          <h1>Document Highlighter</h1>
-          <p className="hint">Please highlight the text below by clicking and dragging</p>
-          <div ref={node => this.highlightContainer = node}>{ this.props.textModel.map(block => this.textBlock(block, hoverId))}</div>
+          <div className="title-row">
+            <div className="header">
+              <h1>Document Highlighter</h1>
+              <p className="hint">Please highlight the text below by clicking and dragging</p>
+            </div>
+            <button 
+              className="import" 
+              type="button"
+              onClick={() => this.toggleEditMode()}
+            >
+              { editMode ? 'Save and Exit' : 'Edit Text' }
+            </button>
+          </div>
+          { !editMode ? this.textBlockLoop(props) : <EditText textModel={props.textModel} update={props.onSelection} /> }
         </div>
       </div>
     );
   }
 
-  textBlock(block, hoverId){
-    let style;
+  textBlockLoop(props){
+    const hoverId = props.hoverId;
 
-    if(hoverId){
-      style = this.createBackground(block.highlights.filter(a => a.id === hoverId));
-    } else {
-      style = this.createBackground(block.highlights);
+    if(props.textModel.length === 1 && props.textModel[0].text.trim() === ""){
+      return (
+        <p className="text-missing">Please click "Edit Text" to add text</p>
+      );
     };
 
     return (
-      <span 
-        data-offset={block.range.start} 
-        style={style}
-      >{block.text}</span>
+    <div 
+      ref={node => this.highlightContainer = node}
+      className="text-wrapper"
+    >
+      { props.textModel.map(block => 
+        <TextBlock key={block.id} block={block} hoverId={hoverId} />
+      )}
+    </div>
     )
   }
 
-  createBackground(backgrounds){
-
-    const bgLength = backgrounds.length;
-
-    if(bgLength === 0) return undefined;
-
-    const weight = Math.floor(100 / bgLength);
-    const remainder = 100 - (weight * bgLength);
-    const colors = backgrounds.map(a => new ColorMixer.Color(a.color));
-    const weights = backgrounds.map(() => weight);
-
-    if(remainder > 0) {
-      weights[0] += remainder;
-    }
-
-    return {
-      background: ColorMixer.mix(colors, weights).toString(),
-      color: '#fff'
-    }
+  toggleEditMode(){
+    this.setState({ editMode: !this.state.editMode });
   }
 
   splitBlockSingle(block, splitLocation, highlight, highlightDirection){
@@ -190,7 +144,7 @@ class Highlighter extends Component {
 
   newHighlight(text){
     const id = Date.now();
-    const color = colors[this.props.highlights.length];
+    const color = getNextColour(this.props.highlights.length);
     
     return { id, color, text };
   }
@@ -266,7 +220,7 @@ class Highlighter extends Component {
     const container = this.highlightContainer;
     const selection = window.getSelection();
     
-    if(!selection) return;
+    if(!selection || !container || !selection.anchorNode || !selection.anchorNode.parentElement) return;
       
     const anchorNode = selection.anchorNode.parentElement;
     const anchorOffset = selection.anchorOffset;
@@ -278,7 +232,6 @@ class Highlighter extends Component {
     if(container.contains(anchorNode) && container.contains(focusNode)){
       const adjustedAnchorOffset = parseInt(anchorNode.dataset.offset) + anchorOffset;
       const adjustedFocusOffset = parseInt(focusNode.dataset.offset) + focusOffset;
-      const forwardSelection = adjustedAnchorOffset < adjustedFocusOffset;
 
       if(isNaN(adjustedAnchorOffset) || isNaN(adjustedFocusOffset)) return;
 
@@ -293,9 +246,5 @@ class Highlighter extends Component {
     }
   }
 }
-
-Highlighter.propTypes = {
-
-};
 
 export default Highlighter;

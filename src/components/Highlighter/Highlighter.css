@@ -3,6 +3,7 @@
 .highlight-container {
     flex: 1;
     padding: 40px;
+    overflow-y: auto;
 }
 
 .highlight-container .page {
@@ -17,8 +18,48 @@
 
 .highlight-container .hint {
     margin: 0;
+    color: #aaa;
+}
+
+.highlight-container .title-row {
     margin-bottom: 20px;
     padding-bottom: 20px;
-    color: #aaa;
     border-bottom: 2px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.highlight-container .import {
+    height: 32px;
+    background: rgba(70, 123, 143);
+    border: none;
+    color: #fff;
+    border-radius: 100px;
+    padding: 4px 12px;
+    cursor: pointer;
+}
+
+.highlight-container textarea {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 300px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.highlight-container .text-wrapper {
+    white-space: pre-wrap;
+}
+
+.highlight-container .text-missing {
+    text-align: center;
+    margin-top: 60px;
+}
+
+.highlight-container .text-block {
+    transition: background-color 50ms linear;
 }

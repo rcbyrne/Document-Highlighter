@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "colormix": "^3.2.0",
-    "plop": "^2.1.0",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-scripts": "2.0.5"
@@ -13,8 +12,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "scaffold": "plop --plopfile internals/generators/index.js"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

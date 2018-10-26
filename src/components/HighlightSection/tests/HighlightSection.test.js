@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {{ properCase name }} from '../{{ properCase name }}';
+import HighlightSection from '../HighlightSection';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(<{{ properCase name }} />, div);
+  ReactDOM.render(<HighlightSection />, div);
   ReactDOM.unmountComponentAtNode(div);
 });
 
