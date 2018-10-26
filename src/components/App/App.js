@@ -73,7 +73,7 @@ class App extends Component {
     });
 
     // Keep textModel clean and combine any possible adjacent blocks
-    textModel = textModel.reduce((model,block,i) => {
+    textModel = textModel.reduce((model,block) => {
 
       const lastIndex = model.length - 1;
       const lastBlock = lastIndex >= 0 && model[lastIndex];

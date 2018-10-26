@@ -32,12 +32,18 @@
 
 .highlight-container .import {
     height: 32px;
-    background: rgba(70, 123, 143);
+    background: rgb(70, 123, 143);
     border: none;
     color: #fff;
     border-radius: 100px;
     padding: 4px 12px;
     cursor: pointer;
+    outline: none;
+    box-shadow: none;
+}
+
+.highlight-container .import:hover {
+    background: rgb(4, 37, 49);
 }
 
 .highlight-container textarea {

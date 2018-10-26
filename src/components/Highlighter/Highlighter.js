@@ -44,8 +44,11 @@ class Highlighter extends Component {
         <div className="page">
           <div className="title-row">
             <div className="header">
-              <h1>Document Highlighter</h1>
-              <p className="hint">Please highlight the text below by clicking and dragging</p>
+              <h1>Document Annotator</h1>
+              <p className="hint">{ editMode ? 
+                'Exit edit mode to get back to annotating' : 
+                'Please annotate the text below by clicking and dragging' 
+              }</p>
             </div>
             <button 
               className="import" 
@@ -230,14 +233,16 @@ class Highlighter extends Component {
 
     // All text selected must be inside the highlight containet
     if(container.contains(anchorNode) && container.contains(focusNode)){
-      const adjustedAnchorOffset = parseInt(anchorNode.dataset.offset) + anchorOffset;
-      const adjustedFocusOffset = parseInt(focusNode.dataset.offset) + focusOffset;
+      const absoluteAnchorOffset = parseInt(anchorNode.dataset.offset) + anchorOffset;
+      const absoluteFocusOffset = parseInt(focusNode.dataset.offset) + focusOffset;
 
-      if(isNaN(adjustedAnchorOffset) || isNaN(adjustedFocusOffset)) return;
+      if(isNaN(absoluteAnchorOffset) || isNaN(absoluteFocusOffset)) {
+        return;
+      }
 
       // Depending on if the user highlighted the text from left-to-right
       // or right-to-left changes the order of the variables
-      const offsets = [adjustedAnchorOffset,adjustedFocusOffset].sort((a,b) => a - b);
+      const offsets = [absoluteAnchorOffset,absoluteFocusOffset].sort((a,b) => a - b);
       this.addSelection(
         offsets[0],
         offsets[1],

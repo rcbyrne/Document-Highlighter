@@ -20,7 +20,7 @@ class HighlightManager extends Component {
 
     return (
       <div className="highlight-manager">
-        <h2>Selections ({length}):</h2>
+        <h2>Annotations ({length}):</h2>
         { highlights.map(({id, text, color}) =>
           <HighlightSection
             key={id}
