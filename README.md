@@ -5,8 +5,8 @@ Prototype document annotator. Allows a user to enter their text and then make mu
 
 ## Installation
 
-`npm install`
-`npm start`
+- `npm install`
+- `npm start`
 
 ## Approach
 
@@ -16,7 +16,7 @@ The text is kept in model which keeps track of the combinations of annotations o
 
 I tried to be consistent with variable naming:
 
--Highlight: An annotation object
--Block: a section of the textModel
--RelativeOffset: Each block in the textModel keeps track of its offset from the start. Relative offset is the offset from the start of the block to the current location
--AbsoluteOffset: Absolute offset is the offset from the start of the text model
+- Highlight: An annotation object
+- Block: a section of the textModel
+- RelativeOffset: Each block in the textModel keeps track of its offset from the start. Relative offset is the offset from the start of the block to the current location
+- AbsoluteOffset: Absolute offset is the offset from the start of the text model
