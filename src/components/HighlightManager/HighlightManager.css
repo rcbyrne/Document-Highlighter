@@ -16,14 +16,14 @@
 
 .highlight-manager h2 {
     padding: 0 20px;
-    font-size: 26px;
+    font-size: 1.6rem;
     font-weight: 200;
     color: #555;
 }
 
 .highlight-manager .stats {
     margin-top: 4px;
-    font-size: 12px;
+    font-size: 0.8rem;
     color: #888;
 }
 

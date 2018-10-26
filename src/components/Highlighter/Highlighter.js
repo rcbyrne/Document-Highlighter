@@ -7,10 +7,9 @@
 import React, { Component } from 'react';
 import './Highlighter.css';
 
-import { createBlock, getNextColour } from '../utils/utils';
+import { createBlock, createHighlight } from '../utils/utils';
 
 import TextBlock from '../TextBlock/TextBlock';
-import EditText from '../EditText/EditText';
 
 
 class Highlighter extends Component {
@@ -21,10 +20,6 @@ class Highlighter extends Component {
     super(props);
 
     this.checkSelectionFn = this.checkSelection.bind(this);
-
-    this.state = {
-      editMode: false
-    }
   }
 
   componentDidMount(){
@@ -37,58 +32,28 @@ class Highlighter extends Component {
 
   render() {
     const props = this.props;
-    const editMode = this.state.editMode;
-
-    return (
-      <div className="highlight-container">
-        <div className="page">
-          <div className="title-row">
-            <div className="header">
-              <h1>Document Annotator</h1>
-              <p className="hint">{ editMode ? 
-                'Exit edit mode to get back to annotating' : 
-                'Please annotate the text below by clicking and dragging' 
-              }</p>
-            </div>
-            <button 
-              className="import" 
-              type="button"
-              onClick={() => this.toggleEditMode()}
-            >
-              { editMode ? 'Save and Exit' : 'Edit Text' }
-            </button>
-          </div>
-          { !editMode ? this.textBlockLoop(props) : <EditText textModel={props.textModel} update={props.onSelection} /> }
-        </div>
-      </div>
-    );
-  }
-
-  textBlockLoop(props){
     const hoverId = props.hoverId;
+    const textModel = props.textModel;
+    const stringOutput = textModel[0].text.trim();
 
-    if(props.textModel.length === 1 && props.textModel[0].text.trim() === ""){
-      return (
-        <p className="text-missing">Please click "Edit Text" to add text</p>
-      );
+    if(!textModel || stringOutput === ""){
+      return (<p className="text-missing">Please click "Edit Text" to add text</p>);
     };
 
     return (
-    <div 
-      ref={node => this.highlightContainer = node}
-      className="text-wrapper"
-    >
-      { props.textModel.map(block => 
-        <TextBlock key={block.id} block={block} hoverId={hoverId} />
-      )}
-    </div>
+      <div
+        className="highlight-container"
+        ref={node => this.highlightContainer = node}
+      >
+        { textModel.map(block => 
+          <TextBlock key={block.id} block={block} hoverId={hoverId} />
+        )}
+      </div>
     )
   }
 
-  toggleEditMode(){
-    this.setState({ editMode: !this.state.editMode });
-  }
-
+  // Split a block into 2, adding the highlight to either the front
+  // or back of the block depending on the highlightDirection relative to the block
   splitBlockSingle(block, splitLocation, highlight, highlightDirection){
 
     const text = block.text;
@@ -98,6 +63,7 @@ class Highlighter extends Component {
     const blockHighlights = block.highlights;
     const newHighlights = [...block.highlights, highlight];
 
+    // return new blocks
     return [
       createBlock(
         text.slice(0, relativeLocation),
@@ -114,6 +80,8 @@ class Highlighter extends Component {
     ];
   }
 
+  // If the highlight falls completely inside the block, split the block in 3
+  // add the highlight to the middle section
   splitBlockDouble(block, splitStart, splitEnd, highlight){
 
     const text = block.text;
@@ -123,6 +91,7 @@ class Highlighter extends Component {
     const relativeEnd = splitEnd - blockStart;
     const blockHighlights = block.highlights;
 
+    // return new blocks
     return [
       createBlock(
         text.slice(0, relativeStart),
@@ -145,19 +114,15 @@ class Highlighter extends Component {
     ];
   }
 
-  newHighlight(text){
-    const id = Date.now();
-    const color = getNextColour(this.props.highlights.length);
-    
-    return { id, color, text };
-  }
-
-  addSelection(selectionStart, selectionEnd, text){
+  // Function responsible for adding the new highlight into the text model
+  // Find out which block(s) the highlight falls in and split them accordingly
+  addHighlight(selectionStart, selectionEnd, text){
 
     const props = this.props;
     const highlights = props.highlights;
-    const newHighlight = this.newHighlight(text);
+    const newHighlight = createHighlight(text, highlights.length);
 
+    //Selection of 0, exit out of function
     if(selectionStart === selectionEnd) return;
 
     const nextModel = props.textModel.reduce((textModel, block) => {
@@ -209,15 +174,20 @@ class Highlighter extends Component {
       return textModel;
     }, []);
 
-    props.onSelection({
+    // Update state
+    props.addHighlight({
       textModel: nextModel,
       highlights: [...highlights, newHighlight]
     });
 
-    // Clear Selection-
-    window.getSelection().empty();
+    // Clear Selection
+    if(window.getSelection) {
+      window.getSelection().empty();
+    }
   }
   
+  // On every mouseup event check if there is a selection and if the
+  // whole that selection falls within the highlightContainer
   checkSelection(){
 
     const container = this.highlightContainer;
@@ -243,7 +213,7 @@ class Highlighter extends Component {
       // Depending on if the user highlighted the text from left-to-right
       // or right-to-left changes the order of the variables
       const offsets = [absoluteAnchorOffset,absoluteFocusOffset].sort((a,b) => a - b);
-      this.addSelection(
+      this.addHighlight(
         offsets[0],
         offsets[1],
         selection.toString()

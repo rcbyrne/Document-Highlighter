@@ -5,7 +5,6 @@
 */
 
 import React from 'react';
-
 import { createBlock } from '../utils/utils';
 
 function EditText(props) {
@@ -16,6 +15,8 @@ function EditText(props) {
     />
   );
 
+  // If the text is edited, create a new text model
+  // and empty highlight array
   function update(e){
     const text = e.target.value;
     props.update({
