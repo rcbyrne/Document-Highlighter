@@ -7,7 +7,7 @@ import Highlighter from '../Highlighter/Highlighter';
 import HighlightManager from '../HighlightManager/HighlightManager';
 import EditText from '../EditText/EditText';
 
-const defaultText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et turpis feugiat, maximus metus sagittis, aliquam libero. Orci varius natoque penatibus et   agnis dis parturient montes, nascetur ridiculus mus. Praesent sit amet consectetur mi. Nunc faucibus feugiat elit, et semper ipsum porta id. Etiam accumsan libero odio, non posuere mi venenatis vitae. Phasellus commodo quam id sapien mattis aliquet. Suspendisse facilisis urna eu nisi ornare auctor. Vestibulum pretium cursus enim, ac tincidunt neque efficitur eget. Maecenas a egestas leo.`;
+const defaultText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et turpis feugiat, maximus metus sagittis, aliquam libero. Orci varius natoque penatibus et agnis dis parturient montes, nascetur ridiculus mus. Praesent sit amet consectetur mi. Nunc faucibus feugiat elit, et semper ipsum porta id. Etiam accumsan libero odio, non posuere mi venenatis vitae. Phasellus commodo quam id sapien mattis aliquet. Suspendisse facilisis urna eu nisi ornare auctor. Vestibulum pretium cursus enim, ac tincidunt neque efficitur eget. Maecenas a egestas leo.`;
 
 class App extends Component {
   constructor(props){
